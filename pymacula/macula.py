@@ -5,6 +5,13 @@ import numpy.random as rand
 from ._macula import maculamod as macula
 
 
+def MaculaModel(object):
+    def __init__(self, t, fobs):
+        self.t = t
+        self.fobs = fobs
+
+    
+
 def macula(t, theta_star, theta_spot, theta_inst,
            derivatives=False, temporal=False, tdeltav=False,
            full_output=False):
