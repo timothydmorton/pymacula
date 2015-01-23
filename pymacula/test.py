@@ -2,7 +2,7 @@ from __future__ import print_function, division
 
 import numpy as np
 import numpy.random as rand
-from pymacula._macula import maculamod as macula
+from ._macula import maculamod as macula
 
 
 def test_macula():
@@ -27,8 +27,8 @@ def test_macula():
     for k in range(Nspot):
         theta_spot[0,k] = rand.random()*np.pi # longitude
         theta_spot[1,k] = rand.random()*np.pi/2 # latitude
-        theta_spot[2,k] = rand.random()*10*np.pi/180 # alpha_max
-        theta_spot[3,k] = rand.random()*0.5 # fspot
+        theta_spot[2,k] = rand.random()*10*np.pi/180 # alpha_max (size of spot)
+        theta_spot[3,k] = rand.random()*0.5 # fspot (flux contrast)
         theta_spot[4,k] = rand.random()*(Tend-Tstart) + Tstart # tmax
         theta_spot[5,k] = rand.random()*(Tend-Tstart)
         theta_spot[6,k] = rand.random()*(Tend-Tstart)
