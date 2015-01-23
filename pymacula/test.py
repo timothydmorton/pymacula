@@ -16,25 +16,26 @@ def test_macula():
     TdeltaV = True
 
     t = np.linspace(0.1,100,1000)
-    Tstart = t[0]; Tend = t[-1]
+    Tstart = 0; Tend = 100.01
 
-    Theta_star = [np.pi/2, 0.233*(Tend-Testart) + 0.1*(Tend-Tstart),
+    theta_star = [np.pi/2, 0.233*(Tend-Tstart) + 0.1*(Tend-Tstart),
                   0.2, 0.2,
                   0.4, 0.4269, -0.0227, -0.0839,
                   0.4, 0.4269, -0.0227, -0.0839]
 
-    Theta_spot = np.zeros(8,Nspot)
+    theta_spot = np.zeros((8,Nspot))
     for k in range(Nspot):
-        Theta_spot[0,k] = rand.random()*np.pi # longitude
-        Theta_spot[1,k] = rand.random()*np.pi/2 # latitude
-        Theta_spot[2,k] = rand.random()*10*np.pi/180 # alpha_max
-        Theta_spot[3,k] = rand.random()*0.5 # fspot
-        Theta_spot[4,k] = rand.random()*(Tend-Tstart) + Tstart # tmax
-        Theta_spot[5,k] = rand.random()*(Tend-Tstart)
-        Theta_spot[6,k] = rand.random()*(Tend-Tstart)
-        Theta_spot[7,k] = rand.random()*(Tend-Tstart)
+        theta_spot[0,k] = rand.random()*np.pi # longitude
+        theta_spot[1,k] = rand.random()*np.pi/2 # latitude
+        theta_spot[2,k] = rand.random()*10*np.pi/180 # alpha_max
+        theta_spot[3,k] = rand.random()*0.5 # fspot
+        theta_spot[4,k] = rand.random()*(Tend-Tstart) + Tstart # tmax
+        theta_spot[5,k] = rand.random()*(Tend-Tstart)
+        theta_spot[6,k] = rand.random()*(Tend-Tstart)
+        theta_spot[7,k] = rand.random()*(Tend-Tstart)
 
-    Theta_inst = np.array([1.,1.])
+    theta_inst = np.array([1.,1.])
 
-    fmod, dfmod_star, dfmod_spot, dfmod_inst, dfmoddt, deltaratio = m.macula()
+    return macula.macula(t, derivatives, temporal, TdeltaV, theta_star, theta_spot, theta_inst, Tstart, Tend) # fmod, dfmod_star, dfmod_spot, dfmod_inst, dfmoddt, deltaratio
+    
     
