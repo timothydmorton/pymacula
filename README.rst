@@ -21,7 +21,7 @@ You can generate a random starspot model::
     >>> from pymacula import MaculaModel
     >>> model = MaculaModel() #default is 3 random spots
 
-You can plot the model::
+You can call the model at random times, e.g., for plotting::
 
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
