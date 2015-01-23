@@ -7,7 +7,7 @@ from ._macula import maculamod
 
 class Star(object):
     def __init__(self, incl=np.pi/2, Peq=30.,
-                 kappa2=0.1, kappa4=0.1, 
+                 kappa2=0.3, kappa4=0.3, 
                  c1=0.3999, c2=0.4269,
                  c3=-0.0227, c4=-0.839,
                  d1=0.3999, d2=0.4269,
@@ -45,16 +45,17 @@ class Spot(object):
         self.lon = lon
 
         if lat is None:
-            lat = rand.random()*np.pi - np.pi/2 
+            lat = np.arccos(rand.random())
+
         self.lat = lat
 
-        self.alpha_max = alpha_max
+        self.alpha_max = np.deg2rad(alpha_max)
         self.contrast = contrast #fspot
 
         #all times are between 0 and 1; should be normalized
         # to actual data time span
         self.tmax = rand.random()
-        self.lifetime = rand.random()
+        self.lifetime = 1
         self.ingress = rand.random()
         self.egress = rand.random()
 
@@ -67,6 +68,7 @@ class Spot(object):
 
 class MaculaModel(object):
     def __init__(self, t=None, fobs=None, 
+                 tmin=0, tmax=500,
                  t_start=None, t_end=None,
                  star=None, nspots=3, spots=None,
                  inst_offsets=None, blend_factors=None):
@@ -82,23 +84,25 @@ class MaculaModel(object):
         if blend_factors is None:
             self.blend_factors = np.ones(self.n_datasets)
             
-        #set simple default of 100 days of observations
         if t is None:
-            t = np.arange(0,100,0.05)
-            
+            self.t_start = np.array([tmin-0.01])
+            self.t_end = np.array([tmax+0.01])
+        else:
+            if t_start is None:
+                self.t_start = np.array([t[0] - 0.01])
+            else:
+                self.t_start = t_start
+
+            if t_end is None:
+                self.t_end = np.array([t[-1] + 0.01])
+            else:
+                self.t_end = t_end
+        
+        self.t_span = self.t_end[-1] - self.t_start[0]
+
         self.t = t
         self.fobs = fobs
         
-        if t_start is None:
-            self.t_start = t[0] - 0.01
-        else:
-            self.t_start = t_start
-
-        if t_end is None:
-            self.t_end = t[-1] + 0.01
-        else:
-            self.t_end = t_end
-
         if star is not None:
             self.star = star
         else:
@@ -114,6 +118,10 @@ class MaculaModel(object):
     def __call__(self, t, derivatives=False,
                  temporal=False, tdeltav=False,
                  full_output=False):
+        """Calls macula
+
+        Only works for t in defined range.
+        """
         return macula(t, self.theta_star, self.theta_spot, self.theta_inst,
                       derivatives=derivatives, temporal=temporal,
                       tdeltav=tdeltav, tstart=self.t_start,
@@ -129,7 +137,7 @@ class MaculaModel(object):
         theta = np.array([self.spots[i].pars for i in xrange(self.nspots)]).T
 
         #rescale spot times from (0,1) to full data span
-        theta[4:, :] *= (self.t[-1] - self.t[0])
+        theta[4:, :] *= self.t_span
 
         return theta
 
