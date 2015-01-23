@@ -14,6 +14,4 @@ If you come across an error in the installation regarding something like ``undef
 
     % FFLAGS=-fPIC LDFLAGS=-shared python setup.py install
     
-Usage
------
-See `example notebook <http://nbviewer.ipython.org/github/timothydmorton/pymacula/blob/master/notebooks/examples.ipynb>`_. 
+For usage examples, see `example notebook <http://nbviewer.ipython.org/github/timothydmorton/pymacula/blob/master/notebooks/examples.ipynb>`_. 
