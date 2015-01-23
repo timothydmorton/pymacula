@@ -103,10 +103,12 @@ class MaculaModel(object):
         self.t = t
         self.fobs = fobs
         
-        if star is not None:
-            self.star = star
-        else:
+        if star is None:
             self.star = Star()
+        elif type(star) is dict:
+            self.star = Star(**star)
+        else:
+            self.star = star
 
         if spots is not None:
             self.spots = spots

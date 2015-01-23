@@ -41,12 +41,12 @@ setup(
     ext_modules=extensions,
     description="Starspot modeling",
     long_description=open("README.rst").read(),
-    package_data={"": ["README.rst", "LICENSE"]},
-    include_package_data=True,
+    #package_data={"": ["README.rst", "LICENSE"]},
+    #include_package_data=True,
     classifiers=[
         # "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
-        "Topic :: Scientific/Engineering :: Astronomy"
+        "Topic :: Scientific/Engineering :: Astronomy",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
