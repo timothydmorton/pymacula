@@ -35,7 +35,7 @@ class Star(object):
                  
 class Spot(object):
     def __init__(self, lon=None, lat=None,
-                 alpha_max=10., contrast=0.3,
+                 alpha_max=5., contrast=0.3,
                  tmax=None, lifetime=None,
                  ingress=None, egress=None):
 
@@ -110,10 +110,12 @@ class MaculaModel(object):
         else:
             self.star = star
 
-        if spots is not None:
-            self.spots = spots
-        else:
+        if spots is None:
             self.spots = [Spot() for i in xrange(nspots)]
+        elif type(spots) is dict:
+            self.spots = [Spot(**spots) for i in xrange(nspots)]
+        else:
+            self.spots = spots
 
         self.nspots = len(self.spots)
 
