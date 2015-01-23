@@ -9,4 +9,5 @@ except NameError:
 
 if not __PYMACULA_SETUP__:
     pass
+    #from ._macula import macula
         

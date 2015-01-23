@@ -27,8 +27,8 @@ if "tag" in sys.argv:
     sys.exit()
 
 # Set up the compiled extension.
-sources = [os.path.join('src','macula.f90')]
-extensions = [Extension("nufft._nufft", sources=sources)]
+sources = [os.path.join('pymacula','macula.f90')]
+extensions = [Extension("pymacula._macula", sources=sources)]
 
 setup(
     name="pymacula",
