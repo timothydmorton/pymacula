@@ -19,7 +19,7 @@ Usage
 You can generate a random starspot model::
 
     >>> from pymacula import MaculaModel
-    >>> model = MaculaModel() #default is 3 random spots; use nspots keyword for different number
+    >>> model = MaculaModel() #default is 3 random spots
 
 You can call the model at random times, e.g., for plotting::
 
@@ -30,6 +30,6 @@ You can call the model at random times, e.g., for plotting::
     
 You can also make a model with non-default star parameters::
 
-    >>> model = MaculaModel(star={'Peq':15}) #rotation period of 15 days instead of default 30
+    >>> model = MaculaModel(star={'Peq':15}) #rotation period of 15 days
     
     
