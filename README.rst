@@ -4,7 +4,7 @@ Python wrapper module for ``macula`` starspot code: https://www.cfa.harvard.edu/
 
 .. code-block::
 
-    git clone https://github.com/timothydmorton/pymacula.git
-    cd pymacula
-    python setup.py install
+    % git clone https://github.com/timothydmorton/pymacula.git
+    % cd pymacula
+    % python setup.py install
 
