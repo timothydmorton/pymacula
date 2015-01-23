@@ -14,22 +14,4 @@ If you come across an error in the installation regarding something like ``undef
 
     % FFLAGS=-fPIC LDFLAGS=-shared python setup.py install
     
-Usage
------
-You can generate a random starspot model::
-
-    >>> from pymacula import MaculaModel
-    >>> model = MaculaModel() #default is 3 random spots
-
-You can call the model at random times, e.g., for plotting::
-
-    >>> import numpy as np
-    >>> import matplotlib.pyplot as plt
-    >>> ts = np.arange(0,100,0.1)
-    >>> plt.plot(ts, model(ts))
-    
-You can also make a model with non-default star parameters::
-
-    >>> model = MaculaModel(star={'Peq':15}) #rotation period of 15 days
-    
-    
+For usage examples, see `example notebook <http://nbviewer.ipython.org/github/timothydmorton/pymacula/blob/master/notebooks/examples.ipynb>`_. 
