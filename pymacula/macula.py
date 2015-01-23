@@ -12,6 +12,9 @@ class Star(object):
                  c3=-0.0227, c4=-0.839,
                  d1=0.3999, d2=0.4269,
                  d3=-0.0227, d4=-0.839):
+        """Star to be used in macula calculation
+        """
+
         self.incl = incl
         self.Peq = Peq
         self.kappa2 = kappa2
@@ -38,6 +41,25 @@ class Spot(object):
                  alpha_max=5., contrast=0.3,
                  tmax=None, lifetime=None,
                  ingress=None, egress=None):
+        """Spot for macula calculation
+
+        Parameters
+        ----------
+        lon, lat : float (optional)
+           Longitude and latitude of spot [radians]
+
+        alpha_max : float (optional)
+           Max size of spot, in degrees
+
+        contrast : float (optional)
+           Spot contrast.
+
+        tmax, lifetime, ingress, egress : float (optional)
+           Time of max spot size, and lifetime, ingress, and egress
+           time of the spot.  All these quantities should be on (0,1),
+           and will be renormalized when used in a ``MaculaModel``.
+           
+        """
 
         #assign random longitudes/latitudes if not provided
         if lon is None:
@@ -70,8 +92,43 @@ class MaculaModel(object):
     def __init__(self, t=None, fobs=None, 
                  tmin=0, tmax=500,
                  t_start=None, t_end=None,
-                 star=None, nspots=3, spots=None,
+                 star=None, spots=None, nspots=3,
                  inst_offsets=None, blend_factors=None):
+        """Model class to interface to macula code.
+
+        Parameters
+        ----------
+        t, fobs : array_like (optional)
+            Times and observed fluxes.  These are optional; if provided,
+            they can be used to fit the model.
+
+        tmin, tmax : float (optional)
+            If t not explicitly provided, tmin and tmax can be used as
+            placeholders for the range of allowed times (which is required
+            in order to call ``macula``).
+
+        t_start, t_end : float or array_like
+            Start and end time(s) of data sets.  
+
+        star : ``None``, dictionary, or ``Star``
+            If ``None``, then a ``Star`` with default parameters will
+            be generated.  If a dictionary, then a ``Star`` will be created
+            with ``Star(**star)``.
+
+        spots : ``None``, dictionary, or list_like
+            If ``None``, then ``nspots`` random spots will be generated.
+            If dictionary, ``nspots`` will be randomly generated using
+            keyword parameters in dictionary.  If a list, then should be a list
+            of ``Spot`` objects.
+
+        nspots : int (optional)
+            Number of spots to have in model.
+
+        inst_offsets, blend_factors : array_like (optional)
+            Instrumental offsets and blend factors; size of each 
+            should be equal to number of datasets used.
+
+        """
 
         if np.size(t_start)!=np.size(t_end):
             raise ValueError('t_start and t_end must be same length')
@@ -122,7 +179,7 @@ class MaculaModel(object):
     def __call__(self, t, derivatives=False,
                  temporal=False, tdeltav=False,
                  full_output=False):
-        """Calls macula
+        """Calls macula at provided times.
 
         Only works for t in defined range.
         """
