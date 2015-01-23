@@ -8,6 +8,5 @@ except NameError:
     __PYMACULA_SETUP__ = False
 
 if not __PYMACULA_SETUP__:
-    pass
-    #from ._macula import macula
+    from .macula import Star, Spot, MaculaModel, macula
         

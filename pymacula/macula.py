@@ -2,19 +2,145 @@ from __future__ import print_function, division
 
 import numpy as np
 import numpy.random as rand
-from ._macula import maculamod as macula
+from ._macula import maculamod
 
 
-def MaculaModel(object):
-    def __init__(self, t, fobs):
+class Star(object):
+    def __init__(self, incl=np.pi/2, Peq=30.,
+                 kappa2=0.1, kappa4=0.1, 
+                 c1=0.3999, c2=0.4269,
+                 c3=-0.0227, c4=-0.839,
+                 d1=0.3999, d2=0.4269,
+                 d3=-0.0227, d4=-0.839):
+        self.incl = incl
+        self.Peq = Peq
+        self.kappa2 = kappa2
+        self.kappa4 = kappa4
+        self.c1 = c1
+        self.c2 = c2
+        self.c3 = c3
+        self.c4 = c4
+        self.d1 = d1
+        self.d2 = d2
+        self.d3 = d3
+        self.d4 = d4
+        
+
+    @property
+    def pars(self):
+        return np.array([self.incl, self.Peq, self.kappa2, 
+                         self.kappa4, self.c1, self.c2,
+                         self.c3, self.c4, self.d1,
+                         self.d2, self.d3, self.d4])
+                 
+class Spot(object):
+    def __init__(self, lon=None, lat=None,
+                 alpha_max=10., contrast=0.3,
+                 tmax=None, lifetime=None,
+                 ingress=None, egress=None):
+
+        #assign random longitudes/latitudes if not provided
+        if lon is None:
+            lon = rand.random()*2*np.pi - np.pi
+        self.lon = lon
+
+        if lat is None:
+            lat = rand.random()*np.pi - np.pi/2 
+        self.lat = lat
+
+        self.alpha_max = alpha_max
+        self.contrast = contrast #fspot
+
+        #all times are between 0 and 1; should be normalized
+        # to actual data time span
+        self.tmax = rand.random()
+        self.lifetime = rand.random()
+        self.ingress = rand.random()
+        self.egress = rand.random()
+
+    @property
+    def pars(self):
+        return np.array([self.lon, self.lat,
+                         self.alpha_max, self.contrast,
+                         self.tmax, self.lifetime,
+                         self.ingress, self.egress])
+
+class MaculaModel(object):
+    def __init__(self, t=None, fobs=None, 
+                 t_start=None, t_end=None,
+                 star=None, nspots=3, spots=None,
+                 inst_offsets=None, blend_factors=None):
+
+        if np.size(t_start)!=np.size(t_end):
+            raise ValueError('t_start and t_end must be same length')
+
+        #number of data sets
+        self.n_datasets = np.size(t_start)
+
+        if inst_offsets is None:
+            self.inst_offsets = np.ones(self.n_datasets)
+        if blend_factors is None:
+            self.blend_factors = np.ones(self.n_datasets)
+            
+        #set simple default of 100 days of observations
+        if t is None:
+            t = np.arange(0,100,0.05)
+            
         self.t = t
         self.fobs = fobs
+        
+        if t_start is None:
+            self.t_start = t[0] - 0.01
+        else:
+            self.t_start = t_start
 
-    
+        if t_end is None:
+            self.t_end = t[-1] + 0.01
+        else:
+            self.t_end = t_end
+
+        if star is not None:
+            self.star = star
+        else:
+            self.star = Star()
+
+        if spots is not None:
+            self.spots = spots
+        else:
+            self.spots = [Spot() for i in xrange(nspots)]
+
+        self.nspots = len(self.spots)
+
+    def __call__(self, t, derivatives=False,
+                 temporal=False, tdeltav=False,
+                 full_output=False):
+        return macula(t, self.theta_star, self.theta_spot, self.theta_inst,
+                      derivatives=derivatives, temporal=temporal,
+                      tdeltav=tdeltav, tstart=self.t_start,
+                      tend=self.t_end, full_output=full_output)
+                      
+
+    @property
+    def theta_star(self):
+        return self.star.pars
+
+    @property
+    def theta_spot(self):
+        theta = np.array([self.spots[i].pars for i in xrange(self.nspots)]).T
+
+        #rescale spot times from (0,1) to full data span
+        theta[4:, :] *= (self.t[-1] - self.t[0])
+
+        return theta
+
+    @property
+    def theta_inst(self):
+        return np.array([self.inst_offsets, self.blend_factors])
+
 
 def macula(t, theta_star, theta_spot, theta_inst,
            derivatives=False, temporal=False, tdeltav=False,
-           full_output=False):
+           full_output=False, tstart=None, tend=None):
     """Wrapper for macula FORTRAN routine.
 
     Parameters
@@ -70,8 +196,12 @@ def macula(t, theta_star, theta_spot, theta_inst,
         
     """
 
+    if tstart is None:
+        tstart = t[0] - 0.01
+    if tend is None:
+        tend = t[-1] + 0.01
 
-    res = macula.macula(t, derivatives, temporal, TdeltaV, theta_star, theta_spot, theta_inst, Tstart, Tend) # fmod, dfmod_star, dfmod_spot, dfmod_inst, dfmoddt, deltaratio
+    res = maculamod.macula(t, derivatives, temporal, tdeltav, theta_star, theta_spot, theta_inst, tstart, tend) # fmod, dfmod_star, dfmod_spot, dfmod_inst, dfmoddt, deltaratio
     if full_output:
         return res
     else:
