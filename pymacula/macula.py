@@ -76,10 +76,18 @@ class Spot(object):
 
         #all times are between 0 and 1; should be normalized
         # to actual data time span
-        self.tmax = rand.random()
-        self.lifetime = 1
-        self.ingress = rand.random()
-        self.egress = rand.random()
+        if tmax is None or tmax < 0 or tmax > 1:
+            tmax = rand.random()
+        if lifetime is None or lifetime < 0 or lifetime > 1:
+            lifetime = 1
+        if ingress is None or ingress < 0 or ingress > 1:
+            ingress = rand.random()            
+        if egress is None or egress < 0 or egress > 1:
+            egress = rand.random()  
+        self.tmax = tmax
+        self.lifetime = lifetime
+        self.ingress = ingress
+        self.egress = egress
 
     @property
     def pars(self):
