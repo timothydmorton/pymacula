@@ -176,9 +176,9 @@ class MaculaModel(object):
             self.star = star
 
         if spots is None:
-            self.spots = [Spot() for i in xrange(nspots)]
+            self.spots = [Spot() for i in range(nspots)]
         elif type(spots) is dict:
-            self.spots = [Spot(**spots) for i in xrange(nspots)]
+            self.spots = [Spot(**spots) for i in range(nspots)]
         else:
             self.spots = spots
 
@@ -203,7 +203,7 @@ class MaculaModel(object):
 
     @property
     def theta_spot(self):
-        theta = np.array([self.spots[i].pars for i in xrange(self.nspots)]).T
+        theta = np.array([self.spots[i].pars for i in range(self.nspots)]).T
 
         #rescale spot times from (0,1) to full data span
         theta[4:, :] *= self.t_span
